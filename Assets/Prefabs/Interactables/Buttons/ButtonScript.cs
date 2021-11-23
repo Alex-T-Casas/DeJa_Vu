@@ -11,14 +11,14 @@ public class ButtonScript : MonoBehaviour
     {
         if (other.gameObject.tag == "Player" || other.gameObject.tag == "Box")
         {
-            Debug.Log("Button unpressed");
+            Debug.Log("Button Unpressed");
             OnObjectLeft();
         }
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Player" || other.gameObject.name == "Stadard_Box")
+        while (other.gameObject.tag == "Player" || other.gameObject.tag == "Box")
         {
             Debug.Log("Button Pressed");
             OnObjectPlaced();
