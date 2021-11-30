@@ -18,7 +18,7 @@ public class ButtonScript : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        while (other.gameObject.tag == "Player" || other.gameObject.tag == "Box")
+        if (other.gameObject.tag == "Player" || other.gameObject.tag == "Box")
         {
             Debug.Log("Button Pressed");
             OnObjectPlaced();

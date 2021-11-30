@@ -7,7 +7,8 @@ public class LogActions : MonoBehaviour
     [Header("Recorded Data")]
     [SerializeField] List<Vector3> positions;
     public Transform player;
-    public Transform echo;
+    [SerializeField] GameObject echo;
+    public Transform echoTrans;
 
     public bool isRecording;
     public bool isReplaying;
@@ -17,17 +18,32 @@ public class LogActions : MonoBehaviour
     private void Start()
     {
         positions = new List<Vector3>();
+        echo.SetActive(false);
+
     }
 
     private void Update()
     {
         if(isRecording)
         {
+            while(echo.activeInHierarchy)
+            {
+                echo.SetActive(false);
+                positions.Clear();
+            }
+            //positions.Clear();
             Record();
             ReplayIndex = positions.Count - 1;
         }
         else if(isReplaying)
         {
+            while(!echo.activeInHierarchy)
+            {
+                echo.SetActive(true);
+            }
+
+            echoTrans = echo.transform;
+
             ReplayIndex--;
             Replay();
             if (ReplayIndex == 0)
