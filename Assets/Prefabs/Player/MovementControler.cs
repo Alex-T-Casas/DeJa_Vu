@@ -19,18 +19,19 @@ public class MovementControler : MonoBehaviour
     Quaternion PreviousFloorLocalRot;
 
     [Header("Physics")]
-    float Gravity = -9.81f;
+    public float Gravity = -9.81f;
     public float pushPower = 2.0f;
 
     [Header("Walking")]
     [SerializeField] float WalkingSpeed = 5f;
-    [SerializeField] float turnSmoothTime = 0.1f;
-    [SerializeField] float turnSmoothVelocity;
+    //[SerializeField] float turnSmoothTime = 0.1f;
+    //[SerializeField] float turnSmoothVelocity;
     [SerializeField] float RotationSpeed = 5f;
     public float MoveInputX;
     public float MoveInputY;
     public float MoveingSideways;
 
+    [SerializeField] float jumpHeight = 2.0f;
     [SerializeField] Vector3 Velocity;
     CharacterController characterController;
     [SerializeField] Transform Cam;
@@ -56,7 +57,13 @@ public class MovementControler : MonoBehaviour
         Debug.Log($"Move Y is: {MoveInputY}");
     }
 
-
+    /*public void Jump()
+    {
+        if(Input.GetKeyDown(KeyCode.Space) && IsOnGround())
+        {
+            Velocity.y += Mathf.Sqrt(jumpHeight * -2f * Gravity);
+        }
+    }*/
     private void Start()
     {
         characterController = GetComponent<CharacterController>();
@@ -112,26 +119,12 @@ public class MovementControler : MonoBehaviour
 
         Vector3 MoveDir = GetPlayerDesiredMoveDir();
 
-        if (!IsOnGround())
-        {
-            Debug.Log("Im NOT on ground");
-            //Velocity += Physics.gravity;
-        }
-        else
-        {
-            Debug.Log("Im on ground");
-        }
-
         Velocity.x = MoveDir.x * WalkingSpeed;
         Velocity.z = MoveDir.z * WalkingSpeed;
         if (Velocity.magnitude >= 0.1)
         {
             Quaternion GoalRotation = Quaternion.LookRotation(MoveDir, Vector3.up);
             transform.rotation = Quaternion.Lerp(transform.rotation, GoalRotation, Time.deltaTime * RotationSpeed);
-
-            //float targetAngle = Mathf.Atan2(Velocity.x, Velocity.y) * Mathf.Rad2Deg + Cam.eulerAngles.y;
-            //float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-            //transform.rotation = Quaternion.Euler(0f, angle, 0f);
 
             characterController.Move(Velocity * Time.deltaTime);
         }
@@ -141,16 +134,6 @@ public class MovementControler : MonoBehaviour
         SnapShotPostitionAndRotation();
     }
 
-    /*internal Vector3 GetPlayerDesiredLookDir()
-    {
-        Ray CursorToWorldRay = Camera.main.ScreenPointToRay(new Vector3(0.5F, 0.5F, 0));
-        float height = CursorToWorldRay.origin.y - transform.position.y;
-        float length = height / Vector3.Dot(new Vector3(0, -1, 0), CursorToWorldRay.direction);
-        Vector3 LookAtLoc = CursorToWorldRay.origin + CursorToWorldRay.direction * length;
-        Vector3 LookAtDir = (LookAtLoc - transform.position).normalized;
-        return LookAtDir;
-    }*/
-
     public Vector3 GetPlayerDesiredMoveDir()
     {
         return (MoveInputX * GetCameraRightDir() + MoveInputY * GetCameraForwardDir()).normalized;
@@ -158,14 +141,21 @@ public class MovementControler : MonoBehaviour
 
     void CalculateWalkingVelocity()
     {
-        if (IsOnGround())
+        if(Input.GetKeyDown(KeyCode.Space) && IsOnGround())
         {
-            Velocity.y = -0.2f;
+            Velocity.y += Mathf.Sqrt(jumpHeight * -2f * Gravity);
+        }
+        else if (IsOnGround() && Velocity.y < 0)
+        {
+            Velocity.y = 0f;
+        }
+        else
+        {
+            Velocity += Physics.gravity;
         }
 
         Velocity.x = GetPlayerDesiredMoveDir().x * WalkingSpeed;
         Velocity.z = GetPlayerDesiredMoveDir().z * WalkingSpeed;
-        Velocity += Physics.gravity;
 
         Vector3 PosXTrancePos = transform.position + new Vector3(TraceingDistance, 0.5f, 0f);
         Vector3 NegXTrancePos = transform.position + new Vector3(-TraceingDistance, 0.5f, 0f);

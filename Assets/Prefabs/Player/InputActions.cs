@@ -57,6 +57,22 @@ public class @InputActions : IInputActionCollection, IDisposable
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Record"",
+                    ""type"": ""Button"",
+                    ""id"": ""4f8e95bb-3e0c-466a-9c19-deb5d5245b11"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Replay"",
+                    ""type"": ""Button"",
+                    ""id"": ""b70d6b2c-8e76-4006-85ca-9bd958e35341"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -169,6 +185,28 @@ public class @InputActions : IInputActionCollection, IDisposable
                     ""action"": ""YMovement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d5179581-3914-4672-98fe-21a3132c627d"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Record"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""45439533-b2ea-4a22-a3a8-df7001717168"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Replay"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -182,6 +220,8 @@ public class @InputActions : IInputActionCollection, IDisposable
         m_Gameplay_Crouch = m_Gameplay.FindAction("Crouch", throwIfNotFound: true);
         m_Gameplay_XMovement = m_Gameplay.FindAction("XMovement", throwIfNotFound: true);
         m_Gameplay_YMovement = m_Gameplay.FindAction("YMovement", throwIfNotFound: true);
+        m_Gameplay_Record = m_Gameplay.FindAction("Record", throwIfNotFound: true);
+        m_Gameplay_Replay = m_Gameplay.FindAction("Replay", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -236,6 +276,8 @@ public class @InputActions : IInputActionCollection, IDisposable
     private readonly InputAction m_Gameplay_Crouch;
     private readonly InputAction m_Gameplay_XMovement;
     private readonly InputAction m_Gameplay_YMovement;
+    private readonly InputAction m_Gameplay_Record;
+    private readonly InputAction m_Gameplay_Replay;
     public struct GameplayActions
     {
         private @InputActions m_Wrapper;
@@ -245,6 +287,8 @@ public class @InputActions : IInputActionCollection, IDisposable
         public InputAction @Crouch => m_Wrapper.m_Gameplay_Crouch;
         public InputAction @XMovement => m_Wrapper.m_Gameplay_XMovement;
         public InputAction @YMovement => m_Wrapper.m_Gameplay_YMovement;
+        public InputAction @Record => m_Wrapper.m_Gameplay_Record;
+        public InputAction @Replay => m_Wrapper.m_Gameplay_Replay;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -269,6 +313,12 @@ public class @InputActions : IInputActionCollection, IDisposable
                 @YMovement.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnYMovement;
                 @YMovement.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnYMovement;
                 @YMovement.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnYMovement;
+                @Record.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnRecord;
+                @Record.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnRecord;
+                @Record.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnRecord;
+                @Replay.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnReplay;
+                @Replay.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnReplay;
+                @Replay.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnReplay;
             }
             m_Wrapper.m_GameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -288,6 +338,12 @@ public class @InputActions : IInputActionCollection, IDisposable
                 @YMovement.started += instance.OnYMovement;
                 @YMovement.performed += instance.OnYMovement;
                 @YMovement.canceled += instance.OnYMovement;
+                @Record.started += instance.OnRecord;
+                @Record.performed += instance.OnRecord;
+                @Record.canceled += instance.OnRecord;
+                @Replay.started += instance.OnReplay;
+                @Replay.performed += instance.OnReplay;
+                @Replay.canceled += instance.OnReplay;
             }
         }
     }
@@ -299,5 +355,7 @@ public class @InputActions : IInputActionCollection, IDisposable
         void OnCrouch(InputAction.CallbackContext context);
         void OnXMovement(InputAction.CallbackContext context);
         void OnYMovement(InputAction.CallbackContext context);
+        void OnRecord(InputAction.CallbackContext context);
+        void OnReplay(InputAction.CallbackContext context);
     }
 }

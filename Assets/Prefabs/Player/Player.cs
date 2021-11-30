@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
     //Refreance scripts
+    private LogActions actionLog;
     private MovementControler movmentComp;
     private InputActions inputActions;
     private Animator animator;
@@ -28,9 +29,13 @@ public class Player : MonoBehaviour
 
         inputActions.Gameplay.YMovement.performed += YMovementOnperformed;
         inputActions.Gameplay.YMovement.canceled += YMovementOncanceled;
+
+        inputActions.Gameplay.Jump.performed += JumpOnperformed;
+
+        inputActions.Gameplay.Record.performed += RecordOnperformed;
+
+        inputActions.Gameplay.Replay.performed += ReplayOnperformed;
     }
-
-
 
     #region InputActions
     private void OnEnable()
@@ -60,6 +65,30 @@ public class Player : MonoBehaviour
     private void YMovementOnperformed(InputAction.CallbackContext obj)
     {
         movmentComp.SetMovementInputY(obj.ReadValue<float>());
+    }
+
+    void JumpOnperformed(InputAction.CallbackContext ctx)
+    {
+        Debug.Log("Jump!");
+
+        //movmentComp.Jump();
+    }
+
+    private void ReplayOnperformed(InputAction.CallbackContext obj)
+    {
+        actionLog.StartReplay();
+    }
+
+    private void RecordOnperformed(InputAction.CallbackContext obj)
+    {
+        if(actionLog.isRecording)
+        {
+            actionLog.EndRecording();
+        }
+        else
+        {
+            actionLog.StartRecording();
+        }
     }
 
     void UpdateAnimationParamaters()
