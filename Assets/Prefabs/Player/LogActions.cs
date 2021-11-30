@@ -13,6 +13,7 @@ public class LogActions : MonoBehaviour
     public bool isReplaying;
 
     private int posIndex = 0;
+    private int ReplayIndex = 0;
     private void Start()
     {
         positions = new List<Vector3>();
@@ -23,10 +24,16 @@ public class LogActions : MonoBehaviour
         if(isRecording)
         {
             Record();
+            ReplayIndex = positions.Count - 1;
         }
         else if(isReplaying)
         {
+            ReplayIndex--;
             Replay();
+            if (ReplayIndex == 0)
+            {
+                isReplaying = false;
+            }
         }
     }
 
@@ -39,12 +46,7 @@ public class LogActions : MonoBehaviour
     void Replay()
     {
         Debug.Log("Replaying");
-        for(int i = positions.Count - 1; i > 0; i--)
-        {
-            Debug.Log($"Currently on pos {i}");
-            echo.transform.position = positions[i];
-            
-        }
+        echo.transform.position = positions[ReplayIndex];
         Invoke("wait", 1f);
     }
 
