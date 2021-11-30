@@ -8,9 +8,11 @@ public class LogActions : MonoBehaviour
     [SerializeField] List<Vector3> positions;
     public Transform player;
     public Transform echo;
+
     public bool isRecording;
     public bool isReplaying;
 
+    private int posIndex = 0;
     private void Start()
     {
         positions = new List<Vector3>();
@@ -30,15 +32,20 @@ public class LogActions : MonoBehaviour
 
     void Record()
     {
-        positions.Insert(0, player.position);
+        positions.Insert(posIndex, player.position);
+        posIndex = posIndex++;
     }
 
     void Replay()
     {
-        for(int i = 0; i < positions.Count; i++)
+        Debug.Log("Replaying");
+        for(int i = positions.Count - 1; i > 0; i--)
         {
-            echo.position = positions[i];
+            Debug.Log($"Currently on pos {i}");
+            echo.transform.position = positions[i];
+            
         }
+        Invoke("wait", 1f);
     }
 
     public void StartRecording()
@@ -60,4 +67,9 @@ public class LogActions : MonoBehaviour
     {
         isReplaying = false;
     }
+
+    void wait()
+    {
+        return;
+    }    
 }

@@ -21,6 +21,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         OnEnable();
+        actionLog = GetComponent<LogActions>();
         movmentComp = GetComponent<MovementControler>();
         animator = GetComponent<Animator>();
         //Set inputs 
