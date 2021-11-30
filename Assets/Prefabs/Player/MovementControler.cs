@@ -5,6 +5,21 @@ using UnityEngine;
 
 public class MovementControler : MonoBehaviour
 {
+    [Header("Ground Check")]
+    [SerializeField] Transform GroundCheck;
+    [SerializeField] float GroundCheckRadius = 0.1f;
+    [SerializeField] float TraceingDistance = 1f;
+    [SerializeField] float TraceingDipth = 0.8f;
+    [SerializeField] LayerMask GroundCheckMask;
+
+    Transform currentFloor;
+    Vector3 PreviousWorldPos;
+    Vector3 PreviousFloorLocalPos;
+    Quaternion PreviousWorldRot;
+    Quaternion PreviousFloorLocalRot;
+
+    float Gravity = -9.81f;
+
     [Header("Walking")]
     [SerializeField] float WalkingSpeed = 5f;
     [SerializeField] float turnSmoothTime = 0.1f;
@@ -45,12 +60,56 @@ public class MovementControler : MonoBehaviour
         characterController = GetComponent<CharacterController>();
     }
 
+    void CheckFloor()
+    {
+        Collider[] cols = Physics.OverlapSphere(GroundCheck.position, GroundCheckRadius, GroundCheckMask);
+        if (cols.Length != 0)
+        {
+            if (currentFloor != cols[0].transform)
+            {
+                currentFloor = cols[0].transform;
+                SnapShotPostitionAndRotation();
+
+            }
+        }
+    }
+
+    void SnapShotPostitionAndRotation()
+    {
+        PreviousWorldPos = transform.position;
+        PreviousWorldRot = transform.rotation;
+        if (currentFloor != null)
+        {
+            PreviousFloorLocalPos = currentFloor.InverseTransformPoint(transform.position);
+            PreviousFloorLocalRot = Quaternion.Inverse(currentFloor.rotation) * transform.rotation;
+        }
+    }
+
+    bool IsOnGround()
+    {
+        return Physics.CheckSphere(GroundCheck.position, GroundCheckRadius, GroundCheckMask);
+    }
+
+    void FollowFloor()
+    {
+        if (currentFloor)
+        {
+            Vector3 DeltaMove = currentFloor.TransformPoint(PreviousFloorLocalPos) - PreviousWorldPos;
+            Velocity += DeltaMove / Time.deltaTime;
+
+            Quaternion DestinationRot = currentFloor.rotation * PreviousFloorLocalRot; // we are adding
+            Quaternion DeltaRot = Quaternion.Inverse(PreviousWorldRot) * DestinationRot;
+            transform.rotation = transform.rotation * DeltaRot;
+        }
+    }
+
     private void Update()
     {
         Vector3 MoveDir = GetPlayerDesiredMoveDir();
         Vector3 AvatarDir = transform.forward;
 
-        
+        Velocity.y += Gravity * Time.deltaTime;
+
         Velocity = MoveDir * WalkingSpeed;
         if (Velocity.magnitude >= 0.1)
         {
@@ -64,6 +123,9 @@ public class MovementControler : MonoBehaviour
             characterController.Move(Velocity * Time.deltaTime);
         }
 
+        CheckFloor();
+        FollowFloor();
+        SnapShotPostitionAndRotation();
     }
 
     /*internal Vector3 GetPlayerDesiredLookDir()
