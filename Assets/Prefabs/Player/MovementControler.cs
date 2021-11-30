@@ -29,7 +29,7 @@ public class MovementControler : MonoBehaviour
     public float MoveInputY;
     public float MoveingSideways;
 
-    Vector3 Velocity;
+    [SerializeField] Vector3 Velocity;
     CharacterController characterController;
     [SerializeField] Transform Cam;
 
@@ -105,12 +105,23 @@ public class MovementControler : MonoBehaviour
 
     private void Update()
     {
+
+        CalculateWalkingVelocity();
+
         Vector3 MoveDir = GetPlayerDesiredMoveDir();
-        Vector3 AvatarDir = transform.forward;
 
-        Velocity.y += Gravity * Time.deltaTime;
+        if (!IsOnGround())
+        {
+            Debug.Log("Im NOT on ground");
+            //Velocity += Physics.gravity;
+        }
+        else
+        {
+            Debug.Log("Im on ground");
+        }
 
-        Velocity = MoveDir * WalkingSpeed;
+        Velocity.x = MoveDir.x * WalkingSpeed;
+        Velocity.z = MoveDir.z * WalkingSpeed;
         if (Velocity.magnitude >= 0.1)
         {
             Quaternion GoalRotation = Quaternion.LookRotation(MoveDir, Vector3.up);
@@ -141,6 +152,36 @@ public class MovementControler : MonoBehaviour
     public Vector3 GetPlayerDesiredMoveDir()
     {
         return (MoveInputX * GetCameraRightDir() + MoveInputY * GetCameraForwardDir()).normalized;
+    }
+
+    void CalculateWalkingVelocity()
+    {
+        if (IsOnGround())
+        {
+            Velocity.y = -0.2f;
+        }
+
+        Velocity.x = GetPlayerDesiredMoveDir().x * WalkingSpeed;
+        Velocity.z = GetPlayerDesiredMoveDir().z * WalkingSpeed;
+        Velocity.y += Gravity * Time.deltaTime;
+
+        Vector3 PosXTrancePos = transform.position + new Vector3(TraceingDistance, 0.5f, 0f);
+        Vector3 NegXTrancePos = transform.position + new Vector3(-TraceingDistance, 0.5f, 0f);
+        Vector3 PosZTrancePos = transform.position + new Vector3(0f, 0.5f, TraceingDistance);
+        Vector3 NegZTrancePos = transform.position + new Vector3(0f, 0.5f, -TraceingDistance);
+
+        bool CanGoPosX = Physics.Raycast(PosXTrancePos, Vector3.down, TraceingDipth, GroundCheckMask);
+        bool CanGoNegX = Physics.Raycast(NegXTrancePos, Vector3.down, TraceingDipth, GroundCheckMask);
+        bool CanGoPosZ = Physics.Raycast(PosZTrancePos, Vector3.down, TraceingDipth, GroundCheckMask);
+        bool CanGoNegZ = Physics.Raycast(NegZTrancePos, Vector3.down, TraceingDipth, GroundCheckMask);
+
+        float xMin = CanGoNegX ? float.MinValue : 0f;
+        float xMax = CanGoPosX ? float.MaxValue : 0f;
+        float zMin = CanGoNegZ ? float.MinValue : 0f;
+        float zMax = CanGoPosZ ? float.MaxValue : 0f;
+
+        Velocity.x = Mathf.Clamp(Velocity.x, xMin, xMax);
+        Velocity.z = Mathf.Clamp(Velocity.z, zMin, zMax);
     }
 
     Vector3 GetCameraRightDir()
