@@ -18,7 +18,9 @@ public class MovementControler : MonoBehaviour
     Quaternion PreviousWorldRot;
     Quaternion PreviousFloorLocalRot;
 
+    [Header("Physics")]
     float Gravity = -9.81f;
+    public float pushPower = 2.0f;
 
     [Header("Walking")]
     [SerializeField] float WalkingSpeed = 5f;
@@ -163,7 +165,7 @@ public class MovementControler : MonoBehaviour
 
         Velocity.x = GetPlayerDesiredMoveDir().x * WalkingSpeed;
         Velocity.z = GetPlayerDesiredMoveDir().z * WalkingSpeed;
-        Velocity.y += Gravity * Time.deltaTime;
+        Velocity += Physics.gravity;
 
         Vector3 PosXTrancePos = transform.position + new Vector3(TraceingDistance, 0.5f, 0f);
         Vector3 NegXTrancePos = transform.position + new Vector3(-TraceingDistance, 0.5f, 0f);
@@ -194,5 +196,28 @@ public class MovementControler : MonoBehaviour
         Vector3 CameraRight = GetCameraRightDir();
         Vector3 UpVector = Vector3.up;
         return -Vector3.Cross(UpVector, CameraRight);
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        Rigidbody body = hit.collider.attachedRigidbody;
+
+        //if no rigidbody is found or is not moveable
+        if(body == null || body.isKinematic)
+        {
+            return;
+        }
+
+        //Preventing the pushing of obj below the player
+        if(hit.moveDirection.y < -0.3f)
+        {
+            return;
+        }
+
+        //calcultate push dir from player move dir 
+        Vector3 pushDir = new Vector3(hit.moveDirection.x, 0, hit.moveDirection.z);
+
+        //Apply the push to the hit rigidbody
+        body.velocity = pushDir * pushPower;
     }
 }
