@@ -121,17 +121,21 @@ public class MovementControler : MonoBehaviour
 
         Vector3 MoveDir = GetPlayerDesiredMoveDir();
 
-        //Velocity = MoveDir * WalkingSpeed;
-
         Velocity.z = MoveDir.z * WalkingSpeed;
         Velocity.x = MoveDir.x * WalkingSpeed;
-        //Velocity.z = MoveDir.z * WalkingSpeed;
+   
         if (Velocity.magnitude >= 0.1)
         {
-            Quaternion GoalRotation = Quaternion.LookRotation(MoveDir, Vector3.up);
+            Debug.DrawLine(transform.position + Vector3.up  * 2f, transform.position + Vector3.up * 2f + MoveDir * 10f);
+            Vector3 DesiredRotDir = transform.forward;
+            if (MoveDir.magnitude != 0)
+            {
+                DesiredRotDir = MoveDir;
+            }
+            Quaternion GoalRotation = Quaternion.LookRotation(DesiredRotDir, Vector3.up);
             Debug.Log($"Goal roation is {GoalRotation}");
             transform.rotation = Quaternion.Lerp(transform.rotation, GoalRotation, Time.deltaTime * RotationSpeed);
-
+            Debug.Log($"velocity is: %{Velocity}");
             characterController.Move(Velocity * Time.deltaTime);
         }
 
@@ -142,18 +146,20 @@ public class MovementControler : MonoBehaviour
 
     public Vector3 GetPlayerDesiredMoveDir()
     {
-        return (MoveInputX * GetCameraRightDir() + MoveInputY * GetCameraForwardDir()).normalized;
+
+        Vector3 DesiredDir = (MoveInputX * GetCameraRightDir() + MoveInputY * GetCameraForwardDir()).normalized;
+
+        return DesiredDir;
     }
 
     void CalculateWalkingVelocity()
     {
         if(Input.GetKeyDown(KeyCode.Space) && IsOnGround())
         {
-            Velocity.y += Mathf.Sqrt(jumpHeight * -2f * Gravity);
-        }
-        else if (IsOnGround() && Velocity.y < 0)
+            Velocity.y = Mathf.Sqrt(jumpHeight * -2f * Gravity);
+        }else if(IsOnGround() && Velocity.y < 0)
         {
-            Velocity.y = 0f;
+            Velocity.y = 0;
         }
         else
         {
