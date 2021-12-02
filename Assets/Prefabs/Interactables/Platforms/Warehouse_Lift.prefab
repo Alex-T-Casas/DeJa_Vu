@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1768153824727229675}
+  - component: {fileID: 8807223246437729296}
   m_Layer: 0
   m_Name: Lift
   m_TagString: Untagged
@@ -32,6 +33,22 @@ Transform:
   m_Father: {fileID: 1768153824877206562}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8807223246437729296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1768153824727229672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5eb99d2b4e193584f9729b656b0bc6eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectToMove: {fileID: 1768153824727229675}
+  transitionTime: 3
+  StartTrans: {fileID: 1768153825754226348}
+  EndTrans: {fileID: 1768153824836150099}
 --- !u!1 &1768153824836150096
 GameObject:
   m_ObjectHideFlags: 0
@@ -71,7 +88,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1768153824877206562}
-  - component: {fileID: 1768153824877206563}
   m_Layer: 0
   m_Name: Warehouse_Lift
   m_TagString: Untagged
@@ -99,22 +115,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1768153824877206563
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1768153824877206560}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eb99d2b4e193584f9729b656b0bc6eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  objectToMove: {fileID: 1768153824727229675}
-  transitionTime: 5
-  StartTrans: {fileID: 1768153825754226348}
-  EndTrans: {fileID: 1768153824836150099}
 --- !u!1 &1768153825754226349
 GameObject:
   m_ObjectHideFlags: 0

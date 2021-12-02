@@ -83,6 +83,8 @@ public class MovementControler : MonoBehaviour
         }
     }
 
+
+
     void SnapShotPostitionAndRotation()
     {
         PreviousWorldPos = transform.position;
@@ -119,11 +121,15 @@ public class MovementControler : MonoBehaviour
 
         Vector3 MoveDir = GetPlayerDesiredMoveDir();
 
-        Velocity.x = MoveDir.x * WalkingSpeed;
+        //Velocity = MoveDir * WalkingSpeed;
+
         Velocity.z = MoveDir.z * WalkingSpeed;
+        Velocity.x = MoveDir.x * WalkingSpeed;
+        //Velocity.z = MoveDir.z * WalkingSpeed;
         if (Velocity.magnitude >= 0.1)
         {
             Quaternion GoalRotation = Quaternion.LookRotation(MoveDir, Vector3.up);
+            Debug.Log($"Goal roation is {GoalRotation}");
             transform.rotation = Quaternion.Lerp(transform.rotation, GoalRotation, Time.deltaTime * RotationSpeed);
 
             characterController.Move(Velocity * Time.deltaTime);
@@ -151,7 +157,7 @@ public class MovementControler : MonoBehaviour
         }
         else
         {
-            Velocity += Physics.gravity;
+            Velocity.y += Gravity * Time.deltaTime;
         }
 
         Velocity.x = GetPlayerDesiredMoveDir().x * WalkingSpeed;
