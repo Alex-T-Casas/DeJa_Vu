@@ -65,20 +65,21 @@ Material:
     - _ChromaticAberration: 4.32
     - _ColorBleedAmount: 1.15
     - _ColorBleedIterations: 10
-    - _Contrast: 0.91
+    - _Contrast: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _LensDistortion: 1.12
+    - _LensDistortion: 1.72
     - _LineAmount: 200
     - _LinesDisplacement: 0.64
     - _LinesSpeed: 1
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
+    - _Opacity: 0
     - _Parallax: 0.02
     - _SineLinesAmount: 14.9
     - _SineLinesDisplacement: 10.5

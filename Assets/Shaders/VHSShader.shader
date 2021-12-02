@@ -16,11 +16,15 @@
         _SineLinesThreshold("Sine lines threshold", Range(0,1)) = 0
         _SineLinesDisplacement("Sine lines displacement", float) = 0
         _NoiseTexture("Noise texture", 2D) = "white" {} 
+        _Opacity("opacity", Range(0,1)) = 0.2
     }
     SubShader
     {
-        // No culling or depth
-        Cull Off ZWrite Off ZTest Always
+        Tags {"Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent"}
+        ZWrite Off
+        Blend SrcAlpha OneMinusSrcAlpha
+        Cull front
+        LOD 100
 
         Pass
         {
@@ -68,6 +72,7 @@
             float _SineLinesSpeed;
             sampler2D _NoiseTexture;
             float4 _NoiseTexture_ST;
+            float _Opacity;
 
             //from https://www.shadertoy.com/view/ldjGzV
             float2 screenDistort(float2 uv) {
@@ -133,6 +138,7 @@
                 col += smoothstep(abs(uv.y * 2.0 - 1.0) - 0.8, abs(uv.y * 2.0 - 1.0) - 0.99, noise);
                 //Passing lines noise
                 col += step(0.99, 1.0 - randLines) * step(sineLines, noise) * 0.2;
+                col.a = _Opacity + col.r * 0.05;
                 return col;
             }
             ENDCG
