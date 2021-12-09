@@ -1,14 +1,16 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 [ExecuteInEditMode]
 [ImageEffectAllowedInSceneView]
 public class CustomImageEffect : MonoBehaviour {
 
 	public Material _material;
-	
 
 	[ImageEffectOpaque]
+
 	void OnRenderImage(RenderTexture src, RenderTexture dest) {
 		Debug.Log("Image render finished");
 		if (_material != null) {

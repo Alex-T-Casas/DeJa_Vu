@@ -138,7 +138,7 @@
                 col += smoothstep(abs(uv.y * 2.0 - 1.0) - 0.8, abs(uv.y * 2.0 - 1.0) - 0.99, noise);
                 //Passing lines noise
                 col += step(0.99, 1.0 - randLines) * step(sineLines, noise) * 0.2;
-                col.a = _Opacity + col.r * 0.05;
+                col.a = _Opacity + col.r * 0.0001;
                 return col;
             }
             ENDCG

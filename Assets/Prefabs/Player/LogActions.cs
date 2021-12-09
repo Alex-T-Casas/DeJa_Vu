@@ -6,6 +6,7 @@ public class LogActions : MonoBehaviour
 {
     [Header("Recorded Data")]
     [SerializeField] List<Vector3> positions;
+    [SerializeField] List<Quaternion> rotations;
     public Transform player;
     [SerializeField] GameObject echo;
     public Transform echoTrans;
@@ -13,10 +14,13 @@ public class LogActions : MonoBehaviour
     public bool isRecording;
     public bool isReplaying;
 
+    private int rotIndex = 0;
     private int posIndex = 0;
-    private int ReplayIndex = 0;
+    private int ReplayPosIndex = 0;
+    private int ReplayRotIndex = 0;
     private void Start()
     {
+        rotations = new List<Quaternion>();
         positions = new List<Vector3>();
         echo.SetActive(false);
 
@@ -30,12 +34,14 @@ public class LogActions : MonoBehaviour
             {
                 echo.SetActive(false);
                 positions.Clear();
+                rotations.Clear();
             }
-            //positions.Clear();
+
             Record();
-            ReplayIndex = positions.Count - 1;
+            ReplayPosIndex = positions.Count - 1;
+            ReplayRotIndex = rotations.Count - 1;
         }
-        else if(isReplaying)
+        else if(isReplaying) // Add check if any record data is readable
         {
             while(!echo.activeInHierarchy)
             {
@@ -44,9 +50,10 @@ public class LogActions : MonoBehaviour
 
             echoTrans = echo.transform;
 
-            ReplayIndex--;
+            ReplayRotIndex--;
+            ReplayPosIndex--;
             Replay();
-            if (ReplayIndex == 0)
+            if (ReplayPosIndex == 0 || ReplayRotIndex == 0)
             {
                 isReplaying = false;
             }
@@ -55,14 +62,18 @@ public class LogActions : MonoBehaviour
 
     void Record()
     {
+        Debug.Log("Recording");
         positions.Insert(posIndex, player.position);
+        rotations.Insert(rotIndex, player.rotation);
         posIndex = posIndex++;
+        rotIndex = rotIndex++;
     }
 
     void Replay()
     {
         Debug.Log("Replaying");
-        echo.transform.position = positions[ReplayIndex];
+        echo.transform.position = positions[ReplayPosIndex];
+        echo.transform.rotation = rotations[ReplayRotIndex];
         Invoke("wait", 1f);
     }
 
