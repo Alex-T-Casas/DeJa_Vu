@@ -13,7 +13,8 @@ public class Player : MonoBehaviour
     private InputActions inputActions;
     private Animator animator;
 
-    [SerializeField] Image recordingLayer;
+    //[SerializeField] Image recordingLayer;
+    //[SerializeField] Image playingLayer;
 
     private void Awake()
     {
@@ -39,7 +40,8 @@ public class Player : MonoBehaviour
 
         inputActions.Gameplay.Replay.performed += ReplayOnperformed;
 
-        recordingLayer.enabled = false;
+        //recordingLayer.enabled = false;
+        //playingLayer.enabled = false;
     }
 
     #region InputActions
@@ -82,18 +84,27 @@ public class Player : MonoBehaviour
     private void ReplayOnperformed(InputAction.CallbackContext obj)
     {
         actionLog.StartReplay();
+        
+        if (actionLog.isReplaying)
+        {
+            //playingLayer.enabled = true;
+        }
+        else
+        {
+            //playingLayer.enabled = false;
+        }
     }
 
     private void RecordOnperformed(InputAction.CallbackContext obj)
     {
         if(actionLog.isRecording)
         {
-            recordingLayer.enabled = false;
+            //recordingLayer.enabled = false;
             actionLog.EndRecording();
         }
         else
         {
-            recordingLayer.enabled = true;
+            //recordingLayer.enabled = true;
             actionLog.StartRecording();
         }
     }

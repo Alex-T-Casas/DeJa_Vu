@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LogActions : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class LogActions : MonoBehaviour
 
     public bool isRecording;
     public bool isReplaying;
+    bool hasRecorded = false;
 
     private int rotIndex = 0;
     private int posIndex = 0;
@@ -28,13 +30,17 @@ public class LogActions : MonoBehaviour
 
     private void Update()
     {
-        if(isRecording)
+        if (isRecording)
         {
-            while(echo.activeInHierarchy)
+            while (echo.activeInHierarchy)
             {
                 echo.SetActive(false);
+            }
+            if(hasRecorded)
+            {
                 positions.Clear();
                 rotations.Clear();
+                hasRecorded = false;
             }
 
             Record();
@@ -43,7 +49,7 @@ public class LogActions : MonoBehaviour
         }
         else if(isReplaying) // Add check if any record data is readable
         {
-            while(!echo.activeInHierarchy)
+            while (!echo.activeInHierarchy)
             {
                 echo.SetActive(true);
             }
@@ -85,6 +91,7 @@ public class LogActions : MonoBehaviour
     public void EndRecording()
     {
         isRecording = false;
+        hasRecorded = true;
     }
 
     public void StartReplay()
