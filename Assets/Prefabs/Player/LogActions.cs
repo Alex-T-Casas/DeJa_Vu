@@ -23,6 +23,10 @@ public class LogActions : MonoBehaviour
     private int ReplayXIndex = 0;
     private int ReplayYIndex = 0;
 
+
+    [SerializeField] Image recordingLayer;
+    [SerializeField] Image playingLayer;
+
     public bool isRecording;
     public bool isReplaying;
     bool hasRecorded = false;
@@ -42,12 +46,16 @@ public class LogActions : MonoBehaviour
         movmentComp = GetComponent<MovementControler>();
         animator = echo.GetComponent<Animator>();
 
+
+        recordingLayer.gameObject.SetActive(false);
+        playingLayer.gameObject.SetActive(false);
     }
 
     private void Update()
     {
         if (isRecording)
         {
+            recordingLayer.gameObject.SetActive(true);
             while (echo.activeInHierarchy)
             {
                 echo.SetActive(false);
@@ -69,6 +77,7 @@ public class LogActions : MonoBehaviour
         }
         else if(isReplaying) // Add check if any record data is readable
         {
+            playingLayer.gameObject.SetActive(true);
             while (!echo.activeInHierarchy)
             {
                 echo.SetActive(true);
@@ -85,6 +94,11 @@ public class LogActions : MonoBehaviour
             {
                 isReplaying = false;
             }
+        }
+        else
+        {
+            recordingLayer.gameObject.SetActive(false);
+            playingLayer.gameObject.SetActive(false);
         }
     }
 

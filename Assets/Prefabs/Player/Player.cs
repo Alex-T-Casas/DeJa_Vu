@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -40,8 +39,6 @@ public class Player : MonoBehaviour
 
         inputActions.Gameplay.Replay.performed += ReplayOnperformed;
 
-        //recordingLayer.enabled = false;
-        //playingLayer.enabled = false;
     }
 
     #region InputActions
@@ -84,15 +81,7 @@ public class Player : MonoBehaviour
     private void ReplayOnperformed(InputAction.CallbackContext obj)
     {
         actionLog.StartReplay();
-        
-        if (actionLog.isReplaying)
-        {
-            //playingLayer.enabled = true;
-        }
-        else
-        {
-            //playingLayer.enabled = false;
-        }
+
     }
 
     private void RecordOnperformed(InputAction.CallbackContext obj)
