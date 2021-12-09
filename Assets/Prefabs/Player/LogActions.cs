@@ -8,9 +8,20 @@ public class LogActions : MonoBehaviour
     [Header("Recorded Data")]
     [SerializeField] List<Vector3> positions;
     [SerializeField] List<Quaternion> rotations;
+    [SerializeField] List<float> MoveingInputX;
+    [SerializeField] List<float> MoveingInputY;
     public Transform player;
     [SerializeField] GameObject echo;
     public Transform echoTrans;
+
+    private MovementControler movmentComp;
+    public float MoveInputX;
+    public float MoveInputY;
+    private Animator animator;
+    private int XIndex = 0;
+    private int YIndex = 0;
+    private int ReplayXIndex = 0;
+    private int ReplayYIndex = 0;
 
     public bool isRecording;
     public bool isReplaying;
@@ -24,7 +35,12 @@ public class LogActions : MonoBehaviour
     {
         rotations = new List<Quaternion>();
         positions = new List<Vector3>();
+        MoveingInputX = new List<float>();
+        MoveingInputY = new List<float>();
         echo.SetActive(false);
+
+        movmentComp = GetComponent<MovementControler>();
+        animator = echo.GetComponent<Animator>();
 
     }
 
@@ -40,12 +56,16 @@ public class LogActions : MonoBehaviour
             {
                 positions.Clear();
                 rotations.Clear();
+                MoveingInputX.Clear();
+                MoveingInputY.Clear();
                 hasRecorded = false;
             }
 
             Record();
             ReplayPosIndex = positions.Count - 1;
             ReplayRotIndex = rotations.Count - 1;
+            ReplayXIndex = MoveingInputX.Count - 1;
+            ReplayYIndex = MoveingInputY.Count - 1;
         }
         else if(isReplaying) // Add check if any record data is readable
         {
@@ -58,6 +78,8 @@ public class LogActions : MonoBehaviour
 
             ReplayRotIndex--;
             ReplayPosIndex--;
+            ReplayXIndex--;
+            ReplayYIndex--;
             Replay();
             if (ReplayPosIndex == 0 || ReplayRotIndex == 0)
             {
@@ -71,8 +93,12 @@ public class LogActions : MonoBehaviour
         Debug.Log("Recording");
         positions.Insert(posIndex, player.position);
         rotations.Insert(rotIndex, player.rotation);
+        MoveingInputX.Insert(XIndex, movmentComp.MoveInputX);
+        MoveingInputY.Insert(YIndex, movmentComp.MoveInputY);
         posIndex = posIndex++;
         rotIndex = rotIndex++;
+        XIndex = XIndex++;
+        YIndex = YIndex++;
     }
 
     void Replay()
@@ -80,6 +106,8 @@ public class LogActions : MonoBehaviour
         Debug.Log("Replaying");
         echo.transform.position = positions[ReplayPosIndex];
         echo.transform.rotation = rotations[ReplayRotIndex];
+        animator.SetFloat("Y", MoveingInputY[ReplayYIndex]);
+        animator.SetFloat("X", MoveingInputX[ReplayXIndex]);
         Invoke("wait", 1f);
     }
 
@@ -102,6 +130,8 @@ public class LogActions : MonoBehaviour
     public void EndReplay()
     {
         isReplaying = false;
+        animator.SetFloat("Y", 0);
+        animator.SetFloat("X", 0);
     }
 
     void wait()
