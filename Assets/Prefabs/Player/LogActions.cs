@@ -23,6 +23,9 @@ public class LogActions : MonoBehaviour
     private int ReplayXIndex = 0;
     private int ReplayYIndex = 0;
 
+    [SerializeField] Image recordingLayer;
+    [SerializeField] Image playingLayer;
+
     public bool isRecording;
     public bool isReplaying;
     bool hasRecorded = false;
@@ -42,23 +45,24 @@ public class LogActions : MonoBehaviour
         movmentComp = GetComponent<MovementControler>();
         animator = echo.GetComponent<Animator>();
 
+        recordingLayer.gameObject.SetActive(false);
+        playingLayer.gameObject.SetActive(false);
+
+
     }
 
     private void Update()
     {
         if (isRecording)
         {
-            while (echo.activeInHierarchy)
+            recordingLayer.gameObject.SetActive(true);
+            if (echo.activeInHierarchy)
             {
-                echo.SetActive(false);
+                RemoveEcho(); 
             }
             if(hasRecorded)
             {
-                positions.Clear();
-                rotations.Clear();
-                MoveingInputX.Clear();
-                MoveingInputY.Clear();
-                hasRecorded = false;
+                ClearData();
             }
 
             Record();
@@ -69,6 +73,7 @@ public class LogActions : MonoBehaviour
         }
         else if(isReplaying) // Add check if any record data is readable
         {
+            playingLayer.gameObject.SetActive(true);
             while (!echo.activeInHierarchy)
             {
                 echo.SetActive(true);
@@ -85,6 +90,11 @@ public class LogActions : MonoBehaviour
             {
                 isReplaying = false;
             }
+        }
+        else
+        {
+            recordingLayer.gameObject.SetActive(false);
+            playingLayer.gameObject.SetActive(false);
         }
     }
 
@@ -132,6 +142,25 @@ public class LogActions : MonoBehaviour
         isReplaying = false;
         animator.SetFloat("Y", 0);
         animator.SetFloat("X", 0);
+    }
+
+    public void ClearData()
+    {
+        positions.Clear();
+        rotations.Clear();
+        MoveingInputX.Clear();
+        MoveingInputY.Clear();
+        hasRecorded = false;
+    }
+
+    public void RemoveEcho()
+    {
+        for (int i = 0; i <= 1; i++)
+        {
+            echo.transform.Translate(Vector3.up);
+        }
+
+        //echo.SetActive(false);
     }
 
     void wait()
